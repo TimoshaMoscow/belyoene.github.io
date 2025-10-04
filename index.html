@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Белойн | Антицифровая реальность</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        :root {
+            --primary: #0034f9;
+            --primary-dark: #0022aa;
+            --primary-light: #4d6cff;
+            --white: #ffffff;
+            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f8faff 50%, #f0f5ff 100%);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 52, 249, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 52, 249, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            color: var(--primary);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .form-title {
+            color: var(--primary);
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 1px solid rgba(0, 52, 249, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 52, 249, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Остальные стили остаются без изменений */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .shape-1 { width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s; }
+        .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: -5s; }
+        .shape-3 { width: 150px; height: 150px; bottom: 20%; left: 20%; animation-delay: -10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, 50px) rotate(90deg); }
+            50% { transform: translate(50px, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(0, 52, 249, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header-scrolled {
+            padding: 10px 40px;
+            box-shadow: 0 5px 30px rgba(0, 52, 249, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 52, 249, 0.2));
+        }
+
+        .logo-text {
+            font-size: 2em;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(0, 52, 249, 0.1);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            position: relative;
+            padding: 10px 0;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .main-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .main-logo-img {
+            height: 120px;
+            width: auto;
+            filter: drop-shadow(0 5px 15px rgba(0, 52, 249, 0.3));
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-main-text {
+            font-size: 5em;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 3px 3px 8px rgba(0, 52, 249, 0.2);
+        }
+
+        .tagline {
+            font-size: 1.8em;
+            color: var(--primary);
+            margin-bottom: 50px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            padding: 60px;
+            box-shadow: 
+                0 15px 50px rgba(0, 52, 249, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 52, 249, 0.2);
+        }
+
+        .service-icon {
+            font-size: 4em;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 3px 6px rgba(0, 52, 249, 0.3));
+        }
+
+        .service-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.5em;
+        }
+
+        .service-card p {
+            color: var(--primary);
+            opacity: 0.9;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 22px 50px;
+            border-radius: 60px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin: 40px 0;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 52, 249, 0.4);
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 52, 249, 0.5);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.2em;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateX(10px);
+        }
+
+        .icon {
+            color: var(--primary);
+            font-size: 1.8em;
+            filter: drop-shadow(0 2px 4px rgba(0, 52, 249, 0.3));
+        }
+
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 60px;
+            text-shadow: 2px 2px 4px rgba(0, 52, 249, 0.1);
+        }
+
+        .about-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 3em;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .about-text p {
+            color: var(--primary);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            font-size: 1.2em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 52, 249, 0.2);
+        }
+
+        .stat-label {
+            color: var(--primary);
+            font-weight: 600;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .spaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .space-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .space-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .space-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .space-content {
+            padding: 30px;
+        }
+
+        .space-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .space-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .space-card p {
+            color: var(--primary);
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .philosophy-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .philosophy-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .philosophy-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .support-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .support-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .support-card:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 60px 20px 30px;
+            border-top: 1px solid rgba(0, 52, 249, 0.1);
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 50px;
+        }
+
+        .footer-column h3 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 15px;
+        }
+
+        .footer-column a {
+            text-decoration: none;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary-dark);
+            opacity: 1;
+            padding-left: 5px;
+        }
+
+        .footer-column li {
+            color: var(--primary);
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--primary);
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 52, 249, 0.2);
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .logo-main-text { font-size: 3em; }
+            .main-logo-img { height: 80px; }
+            .tagline { font-size: 1.4em; }
+            .about-section { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: repeat(2, 1fr); }
+            nav ul { gap: 20px; }
+            .section-title { font-size: 2.5em; }
+            .modal-content { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Модальное окно формы -->
+    <div id="applicationModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <h2 class="form-title">Вернуться к реальности</h2>
+            <form id="applicationForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label class="form-label">Ваше имя</label>
+                    <input type="text" class="form-input" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email для связи</label>
+                    <input type="email" class="form-input" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Телефон</label>
+                    <input type="tel" class="form-input" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Какой сервис вас интересует?</label>
+                    <select class="form-input" name="service" required>
+                        <option value="">Выберите сервис</option>
+                        <option value="capsules">Капсулы тишины</option>
+                        <option value="reading">Читальни</option>
+                        <option value="meeting">Переговорные офлайн</option>
+                        <option value="retreat">Природные ретриты</option>
+                        <option value="letters">Эпистолярный клуб</option>
+                        <option value="maps">Тактильные карты</option>
+                        <option value="detox">Цифровой детокс</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Сообщение (необязательно)</label>
+                    <textarea class="form-input" name="message" rows="4" placeholder="Расскажите о ваших ожиданиях..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Отправить заявку</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+    </div>
+
+    <header id="header">
+        <div class="header-content">
+            <div class="logo-header">
+                <img src="belyoene.png" alt="Белойн" class="logo-img">
+                <div class="logo-text">Белойн</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#spaces">Пространства</a></li>
+                    <li><a href="#philosophy">Философия</a></li>
+                    <li><a href="#support">Поддержка</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="glass-card">
+                    <div class="main-logo">
+                        <img src="belyoene.png" alt="Белойн" class="main-logo-img">
+                        <div class="logo-main-text">Белойн</div>
+                    </div>
+                    <div class="tagline">Дышите. Чувствуйте. Живите.<br>Вне цифрового шума</div>
+                    
+                    <div class="services">
+                        <div class="service-card">
+                            <div class="service-icon">🌌</div>
+                            <div class="service-title">Пространства тишины</div>
+                            <p>Акустически изолированные капсулы для глубокой медитации и восстановления ментального покоя</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-icon">🧭</div>
+                            <div class="service-title">Тактильные карты</div>
+                            <p>Ручной работы на архивной бумаге с рельефными отметками значимых мест</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-icon">📜</div>
+                            <div class="service-title">Эпистолярный клуб</div>
+                            <p>Каллиграфическая переписка с использованием чернил и сургучных печатей</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-icon">🌿</div>
+                            <div class="service-title">Цифровой детокс</div>
+                            <p>Выездные ретриты в заповедных зонах с полным погружением в природу</p>
+                        </div>
+                    </div>
+
+                    <button class="cta-button" onclick="openModal()">Вернуться к реальности</button>
+
+                    <div class="features">
+                        <div class="feature">
+                            <span class="icon">🎯</span> Осознанность вместо скроллинга
+                        </div>
+                        <div class="feature">
+                            <span class="icon">🤝</span> Живые диалоги вместо чатов
+                        </div>
+                        <div class="feature">
+                            <span class="icon">📖</span> Бумажные книги вместо экранов
+                        </div>
+                        <div class="feature">
+                            <span class="icon">🌅</span> Настоящие моменты вместо сторис
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <div class="main-container">
+        <section id="spaces" class="section">
+            <h2 class="section-title">Наши пространства</h2>
+            <div class="spaces-grid">
+                <div class="space-card">
+                    <img src="capsules.png" alt="Капсулы тишины" class="space-image">
+                    <div class="space-content">
+                        <div class="space-icon">🔇</div>
+                        <h3>Капсулы тишины</h3>
+                        <p>Акустически изолированные помещения для глубокой концентрации и медитации</p>
+                    </div>
+                </div>
+                <div class="space-card">
+                    <img src="chitalni.jpeg" alt="Читальни" class="space-image">
+                    <div class="space-content">
+                        <div class="space-icon">📚</div>
+                        <h3>Читальни</h3>
+                        <p>Уютные залы с коллекцией редких бумажных изданий и рукописей</p>
+                    </div>
+                </div>
+                <div class="space-card">
+                    <img src="conversetionroom.jpg" alt="Переговорные офлайн" class="space-image">
+                    <div class="space-content">
+                        <div class="space-icon">💬</div>
+                        <h3>Переговорные офлайн</h3>
+                        <p>Пространства для личных встреч без цифровых посредников</p>
+                    </div>
+                </div>
+                <div class="space-card">
+                    <img src="retrity.jpg" alt="Природные ретриты" class="space-image">
+                    <div class="space-content">
+                        <div class="space-icon">🌳</div>
+                        <h3>Природные ретриты</h3>
+                        <p>Заповедные зоны для полного погружения в естественную среду</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <section id="philosophy" class="section">
+                <h2 class="section-title">Философия</h2>
+                <div class="philosophy-content">
+                    <div class="philosophy-card">
+                        <h3>Манифест</h3>
+                        <p>Наше движение за возвращение к подлинному человеческому опыту, где ценность имеет только то, что можно потрогать, почувствовать и пережить по-настоящему.</p>
+                    </div>
+                    <div class="philosophy-card">
+                        <h3>Исследования</h3>
+                        <p>Научные работы о влиянии цифровой среды на психическое здоровье и эффективности цифрового детокса.</p>
+                    </div>
+                    <div class="philosophy-card">
+                        <h3>Сообщество</h3>
+                        <p>Клуб единомышленников, ценящих живое общение и настоящие эмоции.</p>
+                    </div>
+                    <div class="philosophy-card">
+                        <h3>События</h3>
+                        <p>Встречи, лекции и воркшопы, посвященные осознанному отключению от цифрового шума.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="support" class="section">
+                <h2 class="section-title">Поддержка</h2>
+                <div class="support-options">
+                    <div class="support-card">
+                        <div class="space-icon">✉️</div>
+                        <h3>Написать письмо</h3>
+                        <p>Отправьте нам рукописное послание через нашего курьера</p>
+                    </div>
+                    <div class="support-card">
+                        <div class="space-icon">🏢</div>
+                        <h3>Посетить офис</h3>
+                        <p>Приходите лично в наши пространства для живого общения</p>
+                    </div>
+                    <div class="support-card">
+                        <div class="space-icon">🕊️</div>
+                        <h3>Голубиная почта</h3>
+                        <p>Традиционный способ связи для истинных ценителей аналогового общения</p>
+                    </div>
+                    <div class="support-card">
+                        <div class="space-icon">🚴</div>
+                        <h3>Курьерская служба</h3>
+                        <p>Доставка бумажных сообщений в любой район города</p>
+                    </div>
+                </div>
+            </section>
+
+    <section id="contacts" class="section">
+        <h2 class="section-title">Контакты</h2>
+        <div class="contacts-grid">
+            <div class="contact-card">
+                <h3>Наш офлайн-оазис</h3>
+                <p>📍 ул. Поликахина, 1</p>
+                <p>мкр. Железнодорожный</p>
+                <p>Балашиха, Московская обл.</p>
+                <p>143980</p>
+                <p>🕰️ Ежедневно 10:00-20:00</p>
+            </div>
+            <div class="contact-card">
+                <h3>Электронная почта</h3>
+                <p>✉️ roll3ogurec0@gmail.com</p>
+                <p>🕰️ Ответ в течение 24 часов</p>
+            </div>
+            <div class="contact-card">
+                <h3>Поддержка</h3>
+                <p>📞 +7 (985) 913-13-86</p>
+                <p>🕰️ По предварительной записи</p>
+            </div>
+        </div>
+    </section>
+
+            <section class="about-section" id="about">
+                <div class="about-text">
+                    <h2>Философия<br>осознанного отключения</h2>
+                    <p>В мире, где каждый момент заполнен цифровым шумом, мы создаём оазисы тишины. Наша миссия — вернуть людям способность слышать себя и окружающий мир без фильтров и помех.</p>
+                    <p>Белойн — это не просто услуга, это движение за возвращение к подлинному человеческому опыту, где ценность имеет только то, что можно потрогать, почувствовать и пережить по-настоящему.</p>
+                    <p>Присоединяйтесь к сообществу тех, кто выбирает жизнь beyond digital.</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">15K+</div>
+                        <div class="stat-label">Осознанных клиентов</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">87</div>
+                        <div class="stat-label">Городов присутствия</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Уровень удовлетворения</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Цифровых сервисов</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Наши пространства</h3>
+                <ul>
+                    <li><a href="#spaces">Капсулы тишины</a></li>
+                    <li><a href="#spaces">Читальни</a></li>
+                    <li><a href="#spaces">Переговорные офлайн</a></li>
+                    <li><a href="#spaces">Природные ретриты</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Философия</h3>
+                <ul>
+                    <li><a href="#philosophy">Манифест</a></li>
+                    <li><a href="#philosophy">Исследования</a></li>
+                    <li><a href="#philosophy">Сообщество</a></li>
+                    <li><a href="#philosophy">События</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Поддержка</h3>
+                <ul>
+                    <li><a href="#support">Написать письмо</a></li>
+                    <li><a href="#support">Посетить офис</a></li>
+                    <li><a href="#support">Голубиная почта</a></li>
+                    <li><a href="#support">Курьерская служба</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <ul>
+                    <li><a href="#contacts">📍 Балашиха</a></li>
+                    <li><a href="mailto:roll3ogurec0@gmail.com">✉️ Электронная почта</a></li>
+                    <li><a href="#contacts">📞 Телефон</a></li>
+                    <li><a href="#contacts">🕰️ Время работы</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Белойн. Все права осознанно отпущены в свободное плавание.
+        </div>
+    </footer>
+
+    <script>
+        // Функции для модального окна
+        function openModal() {
+            document.getElementById('applicationModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('applicationModal').style.display = 'none';
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                service: formData.get('service'),
+                message: formData.get('message')
+            };
+
+            // Здесь будет отправка на email через сервер
+            // Пока просто показываем сообщение
+            alert(`Спасибо, ${data.name}! Ваша заявка принята.\nМы свяжемся с вами в течение 24 часов.`);
+            
+            closeModal();
+            event.target.reset();
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('applicationModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Параллакс эффект для фона
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.floating-shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 0.5;
+                const xMove = (x - 0.5) * speed * 50;
+                const yMove = (y - 0.5) * speed * 50;
+                
+                shape.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            });
+        });
+
+        // Скролл хедера
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // Плавная прокрутка
+        document.querySelectorAll('nav a, .footer-column a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
